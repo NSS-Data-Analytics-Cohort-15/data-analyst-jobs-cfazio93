@@ -27,10 +27,10 @@ WHERE location = 'TN' AND star_rating >'4';
 --answer: 3
 
 --5. How many postings in the dataset have a review count between 500 and 1000?
-SELECT COUNT (review_count)
+SELECT COUNT (*)
 FROM data_analyst_jobs
 WHERE review_count BETWEEN '500' AND '1000';
---answer: 0
+--answer: 151
 
 --6. Show the average star rating for companies in each state. The output should show the state as state and the average rating for the state as avg_rating. Which state shows the highest average rating?
 SELECT location AS state, AVG(star_rating) AS avg_rating
@@ -71,10 +71,10 @@ WHERE review_count >5000 AND company IS NOT NULL
 GROUP BY company
 ORDER BY AVG(star_rating) DESC
 LIMIT 1; 
---answer: General Motors (Micrsoft had same rating but GM had more reviews?)
+--answer: Microsoft, General Motors, American Express, Nike, Kaiser Permanente, Unilever (all same rating) -- if you do LIMIT 1, only 1 shows up (General Motors)
 
 --11. Find all the job titles that contain the word ‘Analyst’. How many different job titles are there?
-SELECT DISTINCT (title)
+SELECT COUNT(DISTINCT (title))
 FROM data_analyst_jobs
 WHERE title ILIKE '%Analyst%';
 --answer: 774 different titles
@@ -86,17 +86,21 @@ WHERE title NOT ILIKE '%Analyst%'
 AND title NOT ILIKE '%Analytics%';
 --answer: 4, "data"
 
+SELECT DISTINCT (title)
+FROM data_analyst_jobs
+WHERE title NOT ILIKE '%Analy%';
+
 --BONUS: 
 --You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks.
 --Disregard any postings where the domain is NULL.
 --Order your results so that the domain with the greatest number of hard to fill jobs is at the top.
 --Which three industries are in the top 3 on this list? How many jobs have been listed for more than 3 weeks for each of the top 3?
 
-SELECT COUNT (title), domain
+SELECT COUNT (title), domain, COUNT(*)
 FROM data_analyst_jobs
-WHERE days_since_posting > '21'
+WHERE days_since_posting > '21' AND skill LIKE '%SQL%'
 AND domain IS NOT NULL
 GROUP BY domain
-ORDER BY COUNT(title) DESC
-LIMIT 3;
---answers: consulting and business services (110), health care (96), internet and software (84)
+ORDER BY COUNT(*) DESC;
+--LIMIT 3;
+--answers: internet and software (62), banks and financial services (61), consulting and business services (57)
